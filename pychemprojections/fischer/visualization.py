@@ -7,17 +7,17 @@ from pychemprojections.utils.rdkit_utils import (
 )
 from pychemprojections.fischer.singlechiral import (
     get_smiles_of_chiral_substituent_groups_single_chiral,
-    get_fisher_notation_of_all_substituents,
+    get_fisher_notation_of_all_substituents_single_chiral,
 )
 from pychemprojections.fischer.stringmanipulation import (
     get_condensed_smiles_of_all_substituents,
 )
 from pychemprojections.fischer.multiplechiral import (
-    get_carbon_neighbours_info,
+    get_carbon_neighbours_info_multiple_chiral,
     get_right_and_left_substituents,
-    get_condensed_form_info_of_substituents,
+    get_condensed_form_info_of_substituents_multiple_chiral,
     remove_unnecessary_neighbours,
-    get_fisher_notation_info_for_substituents,
+    get_fisher_notation_info_for_substituents_multiple_chiral,
 )
 from pychemprojections.utils.rdkit_utils import cleanup_Hs
 
@@ -28,14 +28,14 @@ logger = get_module_logger(__name__)
 
 
 def plot_fisher_projection_multiple_chiral_centers(
-    up,
-    down,
-    left,
-    right,
-    iupac_name,
-    canvas_width=2000,
-    canvas_height=2000,
-    output_img_path="output.png",
+    up: str,
+    down: str,
+    left: str,
+    right: str,
+    iupac_name: str,
+    canvas_width: int = 2000,
+    canvas_height: int = 2000,
+    output_img_path: str = "output.png",
 ):
     n_right = len(right)
     right = reversed(right)
@@ -108,14 +108,14 @@ def plot_fisher_projection_multiple_chiral_centers(
 
 
 def plot_fisher_projection_single_chiral_center(
-    up,
-    down,
-    left,
-    right,
-    iupac_name,
-    canvas_width=2000,
-    canvas_height=2000,
-    output_img_path="output_single_chiral.png",
+    up: str,
+    down: str,
+    left: str,
+    right: str,
+    iupac_name: str,
+    canvas_width: int = 2000,
+    canvas_height: int = 2000,
+    output_img_path: str = "output_single_chiral.png",
 ):
     DPI = 300
     line_color = "black"
@@ -176,7 +176,7 @@ def plot_fisher_projection_single_chiral_center(
     plt.savefig(output_img_path)
 
 
-def plot_fischer_projection(input_smiles, canvas_width, canvas_height):
+def plot_fischer_projection(input_smiles: str, canvas_width: int, canvas_height: int):
     output_img_dir = "../output_images"
     os.makedirs(output_img_dir, exist_ok=True)
 
@@ -205,7 +205,7 @@ def plot_fischer_projection(input_smiles, canvas_width, canvas_height):
         logger.info(
             "Converting the condensed notation into a format suitable for plotting on fischer diagram"
         )
-        fischer_notation = get_fisher_notation_of_all_substituents(
+        fischer_notation = get_fisher_notation_of_all_substituents_single_chiral(
             substituents_condensed_form, canvas_width, canvas_height
         )
         logger.debug(f"{fischer_notation=}")
@@ -231,7 +231,9 @@ def plot_fischer_projection(input_smiles, canvas_width, canvas_height):
     if n_chiral_centers > 1:
         smiles_mol_prepared = cleanup_Hs(smiles_mol_prepared)
         logger.info("Extracting the SMILES of the substituents")
-        carbons_neighbours_info = get_carbon_neighbours_info(smiles_mol_prepared)
+        carbons_neighbours_info = get_carbon_neighbours_info_multiple_chiral(
+            smiles_mol_prepared
+        )
         logger.debug(f"{carbons_neighbours_info=}")
 
         sorted_carbons_neighbours_info = sorted(
@@ -243,16 +245,20 @@ def plot_fischer_projection(input_smiles, canvas_width, canvas_height):
         )
 
         logger.info("Converting the SMILES substituents into condensed form")
-        substituents_condensed_form = get_condensed_form_info_of_substituents(
-            sorted_carbons_neighbours_info
+        substituents_condensed_form = (
+            get_condensed_form_info_of_substituents_multiple_chiral(
+                sorted_carbons_neighbours_info
+            )
         )
         logger.debug(f"{substituents_condensed_form=}")
 
         logger.info(
             "Converting the condensed notation into a format suitable for plotting on fischer diagram"
         )
-        substituents_fischer_notation = get_fisher_notation_info_for_substituents(
-            substituents_condensed_form, canvas_width, canvas_height
+        substituents_fischer_notation = (
+            get_fisher_notation_info_for_substituents_multiple_chiral(
+                substituents_condensed_form, canvas_width, canvas_height
+            )
         )
         logger.debug(f"{substituents_fischer_notation=}")
 

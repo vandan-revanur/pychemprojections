@@ -5,15 +5,16 @@ from pychemprojections.fischer.stringmanipulation import (
     get_condensed_smiles_of_all_substituents,
 )
 from pychemprojections.fischer.singlechiral import (
-    get_fisher_notation_of_all_substituents,
+    get_fisher_notation_of_all_substituents_single_chiral,
 )
+from typing import List, Dict, Any
 
 
 def get_smiles_of_chiral_substituent_groups_in_multiple_chiral_chain(
-    smiles_mol_prepared,
-    chiral_tag_of_c_atom=True,
-    sq_bracket_begin_first_chiral_center=None,
-    normal_bracket_begin_achiral_center=None,
+    smiles_mol_prepared: str,
+    chiral_tag_of_c_atom: bool = True,
+    sq_bracket_begin_first_chiral_center: int = None,
+    normal_bracket_begin_achiral_center: int = None,
 ):
     if chiral_tag_of_c_atom:
         sq_bracket_begin = sq_bracket_begin_first_chiral_center
@@ -83,7 +84,7 @@ def get_smiles_of_chiral_substituent_groups_in_multiple_chiral_chain(
     return substituent_groups
 
 
-def get_carbon_neighbours_info(smiles_mol_prepared):
+def get_carbon_neighbours_info_multiple_chiral(smiles_mol_prepared: str):
     smiles_mol_prepared = smiles_mol_prepared.replace("[H]", "H")
     sq_bracket_begin_first_chiral_center = smiles_mol_prepared.find("[")
     sq_bracket_end_last_chiral_center = smiles_mol_prepared.rfind("]")
@@ -139,7 +140,7 @@ def get_carbon_neighbours_info(smiles_mol_prepared):
     return carbons_neighbours_info
 
 
-def get_right_and_left_substituents(substituents_condensed_form):
+def get_right_and_left_substituents(substituents_condensed_form: List[Dict[str:Any]]):
     right = []
     left = []
 
@@ -182,7 +183,9 @@ def get_right_and_left_substituents(substituents_condensed_form):
     return left, right
 
 
-def get_condensed_form_info_of_substituents(sorted_carbons_neighbours_info):
+def get_condensed_form_info_of_substituents_multiple_chiral(
+    sorted_carbons_neighbours_info: List[Dict[str:Any]],
+):
     substituents_condensed_form = []
 
     for c_info in sorted_carbons_neighbours_info:
@@ -194,13 +197,15 @@ def get_condensed_form_info_of_substituents(sorted_carbons_neighbours_info):
     return substituents_condensed_form
 
 
-def get_fisher_notation_info_for_substituents(
-    substituents_condensed_form, canvas_width, canvas_height
+def get_fisher_notation_info_for_substituents_multiple_chiral(
+    substituents_condensed_form: List[Dict[str:Any]],
+    canvas_width: int,
+    canvas_height: int,
 ):
     substituents_fischer_notation = []
 
     for c_info in substituents_condensed_form:
-        c_info["substituents"] = get_fisher_notation_of_all_substituents(
+        c_info["substituents"] = get_fisher_notation_of_all_substituents_single_chiral(
             c_info["substituents"], canvas_width, canvas_height
         )
         substituents_fischer_notation.append(c_info)
@@ -208,7 +213,7 @@ def get_fisher_notation_info_for_substituents(
     return substituents_fischer_notation
 
 
-def remove_unnecessary_neighbours(sorted_carbons_neighbours_info):
+def remove_unnecessary_neighbours(sorted_carbons_neighbours_info: List[Dict[str:Any]]):
     sorted_carbons_neighbours_info[0]["substituents"].pop(-1)
     sorted_carbons_neighbours_info[-1]["substituents"].pop(0)
 

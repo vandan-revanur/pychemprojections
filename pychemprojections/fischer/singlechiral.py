@@ -4,13 +4,13 @@ from pychemprojections.utils.smiles_manipulation_utils import (
 from pychemprojections.fischer.stringmanipulation import (
     prepare_strings_for_fischer_projection_plot,
 )
-
+from typing import List, Dict, Any
 from pychemprojections.utils.logger_utils import get_module_logger
 
 logger = get_module_logger(__name__)
 
 
-def get_smiles_of_chiral_substituent_groups_single_chiral(smiles_mol_prepared):
+def get_smiles_of_chiral_substituent_groups_single_chiral(smiles_mol_prepared: str):
     sq_bracket_begin = smiles_mol_prepared.find("[C@")
     sq_bracket_end = smiles_mol_prepared.find("@]") + 1
 
@@ -45,7 +45,7 @@ def get_smiles_of_chiral_substituent_groups_single_chiral(smiles_mol_prepared):
     return substituent_groups
 
 
-def get_configuration_single_chiral_center(smiles_mol_prepared):
+def get_configuration_single_chiral_center(smiles_mol_prepared: str):
     if "@@" in smiles_mol_prepared:
         configuration = "S"
     else:
@@ -53,8 +53,10 @@ def get_configuration_single_chiral_center(smiles_mol_prepared):
     return configuration
 
 
-def get_fisher_notation_of_all_substituents(
-    substituents_condensed_form, canvas_width, canvas_height
+def get_fisher_notation_of_all_substituents_single_chiral(
+    substituents_condensed_form: List[Dict[str:Any]],
+    canvas_width: int,
+    canvas_height: int,
 ):
     return [
         prepare_strings_for_fischer_projection_plot(c, canvas_width, canvas_height)
