@@ -1,0 +1,25 @@
+[tool.commitizen]
+name = "cz_conventional_commits"
+version = "0.1.0"
+tag_format = "$version"
+version_files = [
+    "pyproject.toml:^version"
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "pychemprojections"
+version = "0.1.0"
+authors = [
+  { name="Vandan Revanur", email="vandanrevanur@gmail.com" },
+]
+description = "A package for visualizing 2D projections of molecules"
+requires-python = ">=3.9"
+dependencies = [
+    'rdkit >= 2022.9.4',
+    'matplotlib >=3.7.0',
+    'pubchempy>=1.0.4'
+]
