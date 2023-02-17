@@ -10,7 +10,7 @@ logger = get_module_logger(__name__)
 
 def split_into_chunks(
     inp_str: str, text_width_pixels_coords: int, threshold_pixels: int
-):
+) -> str:
     inp_str_len = len(inp_str)
     pixels_per_char = int(text_width_pixels_coords // inp_str_len)
     threshold_chars = int(threshold_pixels // pixels_per_char)
@@ -42,7 +42,7 @@ def split_into_chunks(
 
 def get_width_of_text_string(
     canvas_width: int, canvas_height: int, condensed_string: str
-):
+) -> int:
     DPI = 300
     fig, ax1 = plt.subplots(figsize=(canvas_width / DPI, canvas_height / DPI))
     r = fig.canvas.get_renderer()
@@ -57,7 +57,7 @@ def get_width_of_text_string(
 
 def prepare_strings_for_fischer_projection_plot(
     condensed_string: str, canvas_width: int, canvas_height: int
-):
+) -> str:
     regex = "[0-9]+"  # regex for removing cyclic numbering
     wrap_threshold = 0.2
     threshold_pixels = int(canvas_width * wrap_threshold)
@@ -93,7 +93,7 @@ def prepare_strings_for_fischer_projection_plot(
 
 def get_condensed_smiles_of_all_substituents(
     substituents_with_Hs_added: List[Dict[str:Any]],
-):
+) -> List[Dict[str:Any]]:
     return [
         smiles_to_condensed_form(cleanup_Hs(compound))
         for compound in substituents_with_Hs_added

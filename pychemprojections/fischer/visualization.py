@@ -21,7 +21,7 @@ from pychemprojections.fischer.multiplechiral import (
 )
 from pychemprojections.utils.rdkit_utils import cleanup_Hs
 
-
+from typing import List
 from pychemprojections.utils.logger_utils import get_module_logger
 
 logger = get_module_logger(__name__)
@@ -30,8 +30,8 @@ logger = get_module_logger(__name__)
 def plot_fisher_projection_multiple_chiral_centers(
     up: str,
     down: str,
-    left: str,
-    right: str,
+    left: List[str],
+    right: List[str],
     iupac_name: str,
     canvas_width: int = 2000,
     canvas_height: int = 2000,
