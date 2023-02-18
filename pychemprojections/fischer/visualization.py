@@ -20,7 +20,6 @@ from pychemprojections.fischer.multiplechiral import (
     get_fisher_notation_info_for_substituents_multiple_chiral,
 )
 from pychemprojections.utils.rdkit_utils import cleanup_Hs
-
 from typing import List
 from pychemprojections.utils.logger_utils import get_module_logger
 
@@ -228,7 +227,7 @@ def plot_fischer_projection(input_smiles: str, canvas_width: int, canvas_height:
             canvas_height=canvas_height,
             output_img_path=output_file_path,
         )
-    if n_chiral_centers > 1:
+    else:
         smiles_mol_prepared = cleanup_Hs(smiles_mol_prepared)
         logger.info("Extracting the SMILES of the substituents")
         carbons_neighbours_info = get_carbon_neighbours_info_multiple_chiral(
