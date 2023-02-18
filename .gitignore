@@ -2,3 +2,5 @@ pychemprojections/fischer/__pycache__/
 .idea
 pychemprojections/output_images/
 pychemprojections/utils/__pycache__/
+examples/.ipynb_checkpoints
+pychemprojections/__pycache__/
