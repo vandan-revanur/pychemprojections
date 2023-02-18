@@ -32,8 +32,8 @@ def plot_fisher_projection_multiple_chiral_centers(
     left: List[str],
     right: List[str],
     iupac_name: str,
-    canvas_width: int = 2000,
-    canvas_height: int = 2000,
+    canvas_width: int,
+    canvas_height: int,
     output_img_path: str = "output.png",
 ):
     n_right = len(right)
@@ -112,8 +112,8 @@ def plot_fisher_projection_single_chiral_center(
     left: str,
     right: str,
     iupac_name: str,
-    canvas_width: int = 2000,
-    canvas_height: int = 2000,
+    canvas_width: int,
+    canvas_height: int,
     output_img_path: str = "output_single_chiral.png",
 ):
     DPI = 300
@@ -175,7 +175,9 @@ def plot_fisher_projection_single_chiral_center(
     plt.savefig(output_img_path)
 
 
-def plot_fischer_projection(input_smiles: str, canvas_width: int, canvas_height: int):
+def plot_fischer_projection(
+    input_smiles: str, canvas_width: int = 1000, canvas_height: int = 1000
+):
     output_img_dir = "../output_images"
     os.makedirs(output_img_dir, exist_ok=True)
 
