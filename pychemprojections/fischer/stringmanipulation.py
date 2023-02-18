@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import re
 from pychemprojections.utils.rdkit_utils import smiles_to_condensed_form, cleanup_Hs
 from pychemprojections.utils.logger_utils import get_module_logger
-from typing import List, Dict, Any
+from typing import List
 
 logger = get_module_logger(__name__)
 
@@ -92,8 +92,8 @@ def prepare_strings_for_fischer_projection_plot(
 
 
 def get_condensed_smiles_of_all_substituents(
-    substituents_with_Hs_added: List[Dict[str:Any]],
-) -> List[Dict[str:Any]]:
+    substituents_with_Hs_added: List[str],
+) -> List[str]:
     return [
         smiles_to_condensed_form(cleanup_Hs(compound))
         for compound in substituents_with_Hs_added

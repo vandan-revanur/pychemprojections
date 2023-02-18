@@ -4,7 +4,7 @@ from pychemprojections.utils.smiles_manipulation_utils import (
 from pychemprojections.fischer.stringmanipulation import (
     prepare_strings_for_fischer_projection_plot,
 )
-from typing import List, Dict, Any
+from typing import List
 from pychemprojections.utils.logger_utils import get_module_logger
 
 logger = get_module_logger(__name__)
@@ -56,10 +56,10 @@ def get_configuration_single_chiral_center(smiles_mol_prepared: str) -> str:
 
 
 def get_fisher_notation_of_all_substituents_single_chiral(
-    substituents_condensed_form: List[Dict[str:Any]],
+    substituents_condensed_form: List[str],
     canvas_width: int,
     canvas_height: int,
-) -> List[Dict[str:Any]]:
+) -> List[str]:
     return [
         prepare_strings_for_fischer_projection_plot(c, canvas_width, canvas_height)
         for c in substituents_condensed_form
