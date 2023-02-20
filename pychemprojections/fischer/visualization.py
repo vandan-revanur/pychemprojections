@@ -27,6 +27,7 @@ from pychemprojections.fischer.drawingclasses import (
     DrawingInfo,
     SingleChiralFischerNotation,
 )
+import logging
 
 logger = get_module_logger(__name__)
 
@@ -207,10 +208,20 @@ def plot_fisher_projection_single_chiral_center(
 
 
 def plot_fischer_projection(
-    input_smiles: str, canvas_width: int = 1000, canvas_height: int = 1000
+    input_smiles: str,
+    canvas_width: int = 1000,
+    canvas_height: int = 1000,
+    verbosity: int = 0,
 ):
     iupac_name = get_iupac_name_from_smiles(input_smiles)
     smiles_mol_prepared, mol = preprocess_molecule(input_smiles)
+
+    if verbosity == 0:
+        logger.setLevel(logging.WARN)
+    elif verbosity == 1:
+        logger.setLevel(logging.INFO)
+    elif verbosity == 2:
+        logger.setLevel(logging.DEBUG)
 
     logger.info("Preparing SMILES for drawing")
     logger.debug(f"{smiles_mol_prepared=}")

@@ -39,7 +39,6 @@ def get_smiles_of_chiral_substituent_groups_single_chiral(
     sub_group_d = smiles_mol_prepared[mol_c_normal_bracket_end_idx + 1 :]
 
     configuration = get_configuration_single_chiral_center(smiles_mol_prepared)
-    logger.info(f"{configuration=}")
     if configuration == "S":
         substituent_groups = [sub_group_a, sub_group_b, sub_group_c, sub_group_d]
     else:
