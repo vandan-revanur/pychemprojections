@@ -8,6 +8,7 @@ from pychemprojections.fischer.singlechiral import (
     get_fisher_notation_of_all_substituents_single_chiral,
 )
 from typing import List, Dict, Any
+from pychemprojections.fischer.drawingclasses import DrawingInfo
 
 
 def get_smiles_of_chiral_substituent_groups_in_multiple_chiral_chain(
@@ -202,15 +203,13 @@ def get_condensed_form_info_of_substituents_multiple_chiral(
 
 
 def get_fisher_notation_info_for_substituents_multiple_chiral(
-    substituents_condensed_form: List[Dict[str, Any]],
-    canvas_width: int,
-    canvas_height: int,
+    substituents_condensed_form: List[Dict[str, Any]], drawing_info: DrawingInfo
 ) -> List[Dict[str, Any]]:
     substituents_fischer_notation = []
 
     for c_info in substituents_condensed_form:
         c_info["substituents"] = get_fisher_notation_of_all_substituents_single_chiral(
-            c_info["substituents"], canvas_width, canvas_height
+            c_info["substituents"], drawing_info
         )
         substituents_fischer_notation.append(c_info)
 

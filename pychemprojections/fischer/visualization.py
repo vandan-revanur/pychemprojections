@@ -20,22 +20,40 @@ from pychemprojections.fischer.multiplechiral import (
     get_fisher_notation_info_for_substituents_multiple_chiral,
 )
 from pychemprojections.utils.rdkit_utils import cleanup_Hs
-from typing import List
+
 from pychemprojections.utils.logger_utils import get_module_logger
+from pychemprojections.fischer.drawingclasses import (
+    MultipleChiralFischerNotation,
+    DrawingInfo,
+    SingleChiralFischerNotation,
+)
 
 logger = get_module_logger(__name__)
 
 
 def plot_fisher_projection_multiple_chiral_centers(
-    up: str,
-    down: str,
-    left: List[str],
-    right: List[str],
-    iupac_name: str,
-    canvas_width: int,
-    canvas_height: int,
-    output_img_path: str = "output.png",
+    multiple_chiral_fischer_notation: MultipleChiralFischerNotation,
+    drawing_info: DrawingInfo,
 ):
+    right = multiple_chiral_fischer_notation.right
+    left = multiple_chiral_fischer_notation.left
+    down = multiple_chiral_fischer_notation.down
+    up = multiple_chiral_fischer_notation.up
+
+    canvas_width = drawing_info.canvas_width_pixels
+    canvas_height = drawing_info.canvas_height_pixels
+    iupac_name = drawing_info.iupac_name
+
+    output_img_dir = "../output_images"
+    os.makedirs(output_img_dir, exist_ok=True)
+
+    if iupac_name:
+        output_file_name = f"{iupac_name}_fischer_projection.png"
+    else:
+        output_file_name = "output_single_chiral_center.png"
+
+    output_img_path = os.path.join(output_img_dir, output_file_name)
+
     n_right = len(right)
     right = reversed(right)
     left = reversed(left)
@@ -107,17 +125,30 @@ def plot_fisher_projection_multiple_chiral_centers(
 
 
 def plot_fisher_projection_single_chiral_center(
-    up: str,
-    down: str,
-    left: str,
-    right: str,
-    iupac_name: str,
-    canvas_width: int,
-    canvas_height: int,
-    output_img_path: str = "output_single_chiral.png",
+    single_chiral_fischer_notation: SingleChiralFischerNotation,
+    drawing_info: DrawingInfo,
 ):
     DPI = 300
     line_color = "black"
+    canvas_width = drawing_info.canvas_width_pixels
+    canvas_height = drawing_info.canvas_height_pixels
+    iupac_name = drawing_info.iupac_name
+
+    up = single_chiral_fischer_notation.up
+    down = single_chiral_fischer_notation.down
+    left = single_chiral_fischer_notation.left
+    right = single_chiral_fischer_notation.right
+
+    output_img_dir = "../output_images"
+    os.makedirs(output_img_dir, exist_ok=True)
+
+    if iupac_name:
+        output_file_name = f"{iupac_name}_fischer_projection.png"
+    else:
+        output_file_name = "output_single_chiral_center.png"
+
+    output_img_path = os.path.join(output_img_dir, output_file_name)
+
     line_1_vertical_x_coords = (canvas_width / 2, canvas_width / 2)
     line_1_vertical_y_coords = (0, canvas_height)
 
@@ -178,9 +209,6 @@ def plot_fisher_projection_single_chiral_center(
 def plot_fischer_projection(
     input_smiles: str, canvas_width: int = 1000, canvas_height: int = 1000
 ):
-    output_img_dir = "../output_images"
-    os.makedirs(output_img_dir, exist_ok=True)
-
     iupac_name = get_iupac_name_from_smiles(input_smiles)
     smiles_mol_prepared, mol = preprocess_molecule(input_smiles)
 
@@ -189,6 +217,10 @@ def plot_fischer_projection(
     chiral_centers = Chem.FindMolChiralCenters(mol)
     n_chiral_centers = len(chiral_centers)
     logger.info("num of chiral centers %s", n_chiral_centers)
+
+    drawing_info = DrawingInfo(
+        input_smiles, canvas_width, canvas_height, smiles_mol_prepared, iupac_name
+    )
 
     if n_chiral_centers == 1:
         logger.info("Extracting the SMILES of the substituents")
@@ -207,27 +239,18 @@ def plot_fischer_projection(
             "Converting the condensed notation into a format suitable for plotting on fischer diagram"
         )
         fischer_notation = get_fisher_notation_of_all_substituents_single_chiral(
-            substituents_condensed_form, canvas_width, canvas_height
+            substituents_condensed_form, drawing_info
         )
         logger.debug(f"{fischer_notation=}")
 
         [up, right, left, down] = fischer_notation
-        if iupac_name:
-            output_file_name = f"{iupac_name}_fischer_projection.png"
-        else:
-            output_file_name = "output_single_chiral_center.png"
+        single_chiral_fischer_notation = SingleChiralFischerNotation(
+            up=up, down=down, left=left, right=right
+        )
 
-        output_file_path = os.path.join(output_img_dir, output_file_name)
         logger.info("Plotting the fischer projection diagram")
         plot_fisher_projection_single_chiral_center(
-            up=up,
-            down=down,
-            left=left,
-            right=right,
-            iupac_name=iupac_name,
-            canvas_width=canvas_width,
-            canvas_height=canvas_height,
-            output_img_path=output_file_path,
+            single_chiral_fischer_notation, drawing_info
         )
     else:
         smiles_mol_prepared = cleanup_Hs(smiles_mol_prepared)
@@ -251,6 +274,7 @@ def plot_fischer_projection(
                 sorted_carbons_neighbours_info
             )
         )
+
         logger.debug(f"{substituents_condensed_form=}")
 
         logger.info(
@@ -258,7 +282,7 @@ def plot_fischer_projection(
         )
         substituents_fischer_notation = (
             get_fisher_notation_info_for_substituents_multiple_chiral(
-                substituents_condensed_form, canvas_width, canvas_height
+                substituents_condensed_form, drawing_info
             )
         )
         logger.debug(f"{substituents_fischer_notation=}")
@@ -270,21 +294,11 @@ def plot_fischer_projection(
             right
         ), f"The number of substituents on the left side of the chain ({len(left)}) do not match the number of substituents on the right side ({len(right)})"
 
-        if iupac_name:
-            output_file_name = f"{iupac_name}_fischer_projection.png"
-        else:
-            output_file_name = "output_multiple_chiral_centers.png"
-
-        output_file_path = os.path.join(output_img_dir, output_file_name)
+        multiple_chiral_fischer_notation = MultipleChiralFischerNotation(
+            up=up, down=down, left=left, right=right
+        )
 
         logger.info("Plotting the fischer projection diagram")
         plot_fisher_projection_multiple_chiral_centers(
-            up=up,
-            down=down,
-            left=left,
-            right=right,
-            iupac_name=iupac_name,
-            canvas_width=canvas_width,
-            canvas_height=canvas_height,
-            output_img_path=output_file_path,
+            multiple_chiral_fischer_notation, drawing_info
         )

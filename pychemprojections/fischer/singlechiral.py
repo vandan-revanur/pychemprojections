@@ -6,6 +6,7 @@ from pychemprojections.fischer.stringmanipulation import (
 )
 from typing import List
 from pychemprojections.utils.logger_utils import get_module_logger
+from pychemprojections.fischer.drawingclasses import DrawingInfo
 
 logger = get_module_logger(__name__)
 
@@ -56,11 +57,11 @@ def get_configuration_single_chiral_center(smiles_mol_prepared: str) -> str:
 
 
 def get_fisher_notation_of_all_substituents_single_chiral(
-    substituents_condensed_form: List[str],
-    canvas_width: int,
-    canvas_height: int,
+    substituents_condensed_form: List[str], drawing_info: DrawingInfo
 ) -> List[str]:
     return [
-        prepare_strings_for_fischer_projection_plot(c, canvas_width, canvas_height)
+        prepare_strings_for_fischer_projection_plot(
+            c, drawing_info.canvas_width_pixels, drawing_info.canvas_height_pixels
+        )
         for c in substituents_condensed_form
     ]
