@@ -26,4 +26,4 @@ This project is licensed under the BSD License - see the [license.txt](license.t
 
 ## Acknowledgments
 
-* The idea for this building this library originated from a Chemistry Stack Exchange [question](https://chemistry.stackexchange.com/questions/169465/is-it-possible-to-create-fischer-projections-or-similar-from-smiles-expression)
+* The idea for building this library originated from a Chemistry Stack Exchange [question](https://chemistry.stackexchange.com/questions/169465/is-it-possible-to-create-fischer-projections-or-similar-from-smiles-expression)
