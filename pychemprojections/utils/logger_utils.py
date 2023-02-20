@@ -1,7 +1,7 @@
 import logging
 
 
-def get_module_logger(mod_name):
+def get_module_logger(mod_name: str):
     logger = logging.getLogger(mod_name)
     handler = logging.StreamHandler()
     formatter = logging.Formatter("%(asctime)s %(name)-12s %(levelname)-8s %(message)s")
