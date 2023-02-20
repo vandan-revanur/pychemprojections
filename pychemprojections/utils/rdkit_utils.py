@@ -4,6 +4,7 @@ from rdkit.Chem import Mol
 from rdkit.Chem import rdMolDescriptors
 import pubchempy
 import re
+from typing import List, Tuple, Dict, Any
 from pychemprojections.utils.logger_utils import get_module_logger
 
 logger = get_module_logger(__name__)
@@ -22,16 +23,16 @@ def smiles_to_svg(
 
     with open(svg_file_path, "w") as f:
         f.write(svg)
-    return
+    return svg
 
 
-def convert_smiles_to_molecular_formula(input_smiles):
+def convert_smiles_to_molecular_formula(input_smiles: str) -> str:
     mol = Chem.MolFromSmiles(input_smiles)
     molecular_formula = rdMolDescriptors.CalcMolFormula(mol)
     return molecular_formula
 
 
-def get_iupac_name_from_smiles(input_smiles):
+def get_iupac_name_from_smiles(input_smiles: str) -> str:
     try:
         compounds = pubchempy.get_compounds(input_smiles, namespace="smiles")
         match = compounds[0]
@@ -41,7 +42,7 @@ def get_iupac_name_from_smiles(input_smiles):
     return iupac_name
 
 
-def smiles_to_condensed_form(input_smiles):
+def smiles_to_condensed_form(input_smiles: str) -> str:
     regex = r"([Cc]|])+[0-9]"  # regex for removing cyclic numbering, it could c/C followed by a number or like [C@]/[C@@] followed by a number
     pos_of_cyclic_Cs = [
         substr.start() + 1 for substr in re.finditer(regex, input_smiles)
@@ -65,7 +66,7 @@ def smiles_to_condensed_form(input_smiles):
     return condensed_string
 
 
-def get_atom_ids_of_all_carbon_atoms(molecule):
+def get_atom_ids_of_all_carbon_atoms(molecule: Mol) -> List[int]:
     atom_ids = []
     for a in molecule.GetAtoms():
         atom_id = a.GetIdx()
@@ -75,7 +76,7 @@ def get_atom_ids_of_all_carbon_atoms(molecule):
     return sorted(atom_ids)
 
 
-def preprocess_molecule(input_smiles):
+def preprocess_molecule(input_smiles: str) -> Tuple[str, Mol]:
     mol = Chem.MolFromSmiles(input_smiles)
     mol = rdMolDraw2D.PrepareMolForDrawing(mol)
     mol = Chem.AddHs(mol)
@@ -85,7 +86,7 @@ def preprocess_molecule(input_smiles):
     return smiles_mol_prepared, mol
 
 
-def cleanup_Hs(input_smiles):
+def cleanup_Hs(input_smiles: str) -> str:
     if input_smiles[0:4] == "[H]C":
         input_smiles_H_cleaned = "C[H]" + input_smiles[4:]
     else:
@@ -93,7 +94,7 @@ def cleanup_Hs(input_smiles):
     return input_smiles_H_cleaned
 
 
-def get_neighbours_of_all_C_atoms(molecule):
+def get_neighbours_of_all_C_atoms(molecule: Mol) -> Dict[str, Any]:
     mol_info = {}
     for a in molecule.GetAtoms():
         atom_id = a.GetIdx()
@@ -108,7 +109,9 @@ def get_neighbours_of_all_C_atoms(molecule):
     return mol_info
 
 
-def get_neighbours_of_all_chiral_C_atoms(molecule, atom_ids):
+def get_neighbours_of_all_chiral_C_atoms(
+    molecule: Mol, atom_ids: List[int]
+) -> Dict[int, Any]:
     mol_info = {}
     for a in molecule.GetAtoms():
         atom_id = a.GetIdx()
@@ -122,7 +125,7 @@ def get_neighbours_of_all_chiral_C_atoms(molecule, atom_ids):
     return mol_info
 
 
-def get_atom_ids_of_chiral_carbons(mol):
+def get_atom_ids_of_chiral_carbons(mol: Mol) -> List[int]:
     chiral_centers = Chem.FindMolChiralCenters(mol)
     atom_ids = [info[0] for info in chiral_centers]
     return atom_ids
