@@ -9,9 +9,11 @@ from pychemprojections.utils.smiles_manipulation_utils import (
 )
 from pychemprojections.utils.rdkit_utils import get_atom_ids_of_all_carbon_atoms
 from rdkit import Chem
+from rdkit.Chem import Mol, PropertyMol
+from typing import Dict, Any, List
 
 
-def get_condensed_groups(groups):
+def get_condensed_groups(groups: Dict[str, Any]) -> List[str]:
     front_and_rear_groups = []
     for k, v in groups.items():
         front_and_rear_groups.extend(v.values())
@@ -106,11 +108,13 @@ def smiles_post_processing(input_smiles, condensed, n_carbons_for_truncation):
 
 
 def get_substituents_front_and_rear(
-    smiles_mol_prepared, start_carbon_atom_idx_in_str, end_carbon_atom_idx_in_str
-):
+    smiles_mol_prepared: str,
+    start_carbon_atom_idx_in_str: int,
+    end_carbon_atom_idx_in_str: int,
+) -> Dict[str, Any]:
     groups = {
-        "front": {"1": None, "2": None, "3": None},
-        "rear": {"1": None, "2": None, "3": None},
+        "front": {"1": "", "2": "", "3": ""},
+        "rear": {"1": "", "2": "", "3": ""},
     }
     start_idx_group_1_front = 0
     end_idx_group_1_front = start_carbon_atom_idx_in_str
@@ -175,8 +179,8 @@ def get_substituents_front_and_rear(
 
 
 def get_post_processed_smiles(
-    smiles_groups, groups_condensed, n_carbons_for_truncation
-):
+    smiles_groups: List[str], groups_condensed: List[str], n_carbons_for_truncation: int
+) -> List[str]:
     post_processed_smiles = []
     for input_smiles, condensed_group in zip(smiles_groups, groups_condensed):
         post_processed_smiles.append(
@@ -188,8 +192,8 @@ def get_post_processed_smiles(
 
 
 def create_mapping_between_atom_ids_in_smiles_and_rdkit_mol_def(
-    mol, smiles_mol_prepared
-):
+    mol: Mol, smiles_mol_prepared: str
+) -> Dict[int, int]:
     carbon_atom_ids_in_mol = get_atom_ids_of_all_carbon_atoms(mol)
     carbon_atom_ids_in_str = get_c_ids_in_smiles(smiles_mol_prepared)
     assert len(carbon_atom_ids_in_str) == len(
@@ -203,7 +207,7 @@ def create_mapping_between_atom_ids_in_smiles_and_rdkit_mol_def(
     return carbon_ids_mol_to_str_map
 
 
-def calibration_for_post_processing(groups):
+def calibration_for_post_processing(groups: Dict[str, Any]) -> List[str]:
     smiles_groups = []
     group_1_front_mol = Chem.MolFromSmiles(groups["front"]["1"] + "[H]")
     group_1_front_mol = Chem.RemoveHs(group_1_front_mol)

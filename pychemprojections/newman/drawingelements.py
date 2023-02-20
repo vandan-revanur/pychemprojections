@@ -3,7 +3,7 @@ from dataclasses import dataclass
 from math import radians
 from numpy import cos, sin
 from pychemprojections.utils.logger_utils import get_module_logger
-
+from pychemprojections.newman.drawingclasses import AtomInfo
 
 logger = get_module_logger(__name__)
 
@@ -59,9 +59,16 @@ def add_lines(
     return ax
 
 
-def add_atoms(
-    ax, labels, angles_degs, fontsize, origin_x, origin_y, annotation_offset, pos
-):
+def add_atoms(atom_info: AtomInfo):
+    ax = atom_info.ax
+    labels = atom_info.atoms
+    angles_degs = atom_info.angles
+    fontsize = atom_info.fontsize
+    origin_x = atom_info.origin_x
+    origin_y = atom_info.origin_y
+    annotation_offset = atom_info.annotation_offset
+    pos = atom_info.pos
+
     annotation_start_coords = Point(origin_x, origin_y + annotation_offset)
 
     logger.info(f"atom labels in the {pos}: {labels}")

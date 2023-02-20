@@ -14,29 +14,37 @@ from pychemprojections.newman.stringmanipulation import (
     calibration_for_post_processing,
 )
 from pychemprojections.newman.drawingelements import draw_circle, add_atoms, add_lines
+from typing import Tuple, List
+from pychemprojections.newman.drawingclasses import NewmanDrawingInfo, AtomInfo
 
 logger = get_module_logger(__name__)
 
 
-def plot_projection(
-    rear_atoms,
-    front_atoms,
-    rear_angles,
-    front_angles,
-    circle_radius,
-    canvas_width_inches,
-    canvas_height_inches,
-    axes_x_limits,
-    axes_y_limits,
-    origin_x,
-    origin_y,
-    dpi,
-    start_line_offset,
-    end_line_offset,
-    annotation_offset,
-    iupac_name,
-):
+def plot_projection(newman_drawing_info: NewmanDrawingInfo):
     output_img_dir = "../output_images"
+    origin_x = 0
+    origin_y = 0
+    end_line_offset = 1.4
+    start_line_offset = 1
+
+    annotation_offset = end_line_offset + 0.3
+    front_angles = [60, 180, 300]
+    rear_angles = [0, 120, 240]
+    dpi = 300
+    circle_radius = 1
+
+    canvas_width_pixels = newman_drawing_info.canvas_width_pixels
+    canvas_height_pixels = newman_drawing_info.canvas_height_pixels
+    rear_atoms = newman_drawing_info.rear_atoms
+    front_atoms = newman_drawing_info.front_atoms
+    iupac_name = newman_drawing_info.iupac_name
+
+    canvas_width_inches = canvas_width_pixels / dpi
+    canvas_height_inches = canvas_height_pixels / dpi
+
+    axes_x_limits = (-end_line_offset * 2, end_line_offset * 2)
+    axes_y_limits = (-end_line_offset * 2, end_line_offset * 2)
+
     os.makedirs(output_img_dir, exist_ok=True)
 
     plt.ioff()
@@ -59,8 +67,7 @@ def plot_projection(
     )
     logger.info("adding atoms")
 
-    pos = "rear"
-    ax = add_atoms(
+    rear_atom_info = AtomInfo(
         ax,
         rear_atoms,
         rear_angles,
@@ -68,11 +75,10 @@ def plot_projection(
         origin_x,
         origin_y,
         annotation_offset,
-        pos,
+        "rear",
     )
-
-    pos = "front"
-    ax = add_atoms(
+    ax = add_atoms(rear_atom_info)
+    front_atom_info = AtomInfo(
         ax,
         front_atoms,
         front_angles,
@@ -80,8 +86,10 @@ def plot_projection(
         origin_x,
         origin_y,
         annotation_offset,
-        pos,
+        "front",
     )
+
+    ax = add_atoms(front_atom_info)
 
     if iupac_name:
         output_file_name = f"{iupac_name}_newman_projection.png"
@@ -91,30 +99,16 @@ def plot_projection(
     output_file_path = os.path.join(output_img_dir, output_file_name)
 
     plt.savefig(output_file_path, dpi=dpi)
-    plt.close()
+    plt.show()
 
 
 def plot_newman_projection(
-    input_smiles,
-    canvas_width_pixels,
-    canvas_height_pixels,
-    carbon_ids_bond_to_examine=None,
+    input_smiles: str,
+    canvas_width_pixels: int = 2000,
+    canvas_height_pixels: int = 2000,
+    carbon_ids_bond_to_examine: Tuple[int, int] = None,
 ):
-    origin_x = 0
-    origin_y = 0
-    end_line_offset = 1.4
-    start_line_offset = 1
     n_carbons_for_truncation = 6
-    annotation_offset = end_line_offset + 0.3
-    radius = 1
-    front_angles = [60, 180, 300]
-    rear_angles = [0, 120, 240]
-    dpi = 300
-    canvas_width_inches = canvas_width_pixels / dpi
-    canvas_height_inches = canvas_height_pixels / dpi
-
-    axes_x_limits = (-end_line_offset * 2, end_line_offset * 2)
-    axes_y_limits = (-end_line_offset * 2, end_line_offset * 2)
 
     smiles_mol_prepared, mol = preprocess_molecule(input_smiles)
     carbon_ids_mol_to_str_map = (
@@ -149,27 +143,20 @@ def plot_newman_projection(
     front_atoms, rear_atoms = get_front_and_back_groups_for_plotting(
         post_processed_smiles
     )
-    plot_projection(
+
+    newman_drawing_info = NewmanDrawingInfo(
         rear_atoms,
         front_atoms,
-        rear_angles,
-        front_angles,
-        radius,
-        canvas_width_inches,
-        canvas_height_inches,
-        axes_x_limits,
-        axes_y_limits,
-        origin_x,
-        origin_y,
-        dpi,
-        start_line_offset,
-        end_line_offset,
-        annotation_offset,
+        canvas_width_pixels,
+        canvas_height_pixels,
         iupac_name,
     )
+    plot_projection(newman_drawing_info)
 
 
-def get_front_and_back_groups_for_plotting(post_processed_smiles):
+def get_front_and_back_groups_for_plotting(
+    post_processed_smiles: List[str],
+) -> Tuple[List[str], List[str]]:
     newman_smiles = [
         prepare_strings_for_newman_projection_plot(psm) for psm in post_processed_smiles
     ]
