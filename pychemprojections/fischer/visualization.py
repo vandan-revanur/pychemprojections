@@ -140,7 +140,7 @@ def plot_fisher_projection_single_chiral_center(
     left = single_chiral_fischer_notation.left
     right = single_chiral_fischer_notation.right
 
-    output_img_dir = "../output_images"
+    output_img_dir = "pychemprojections/output_images"
     os.makedirs(output_img_dir, exist_ok=True)
 
     if iupac_name:

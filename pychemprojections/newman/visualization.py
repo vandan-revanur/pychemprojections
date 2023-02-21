@@ -21,7 +21,7 @@ logger = get_module_logger(__name__)
 
 
 def plot_projection(newman_drawing_info: NewmanDrawingInfo):
-    output_img_dir = "../output_images"
+    output_img_dir = "output_images"
     origin_x = 0
     origin_y = 0
     end_line_offset = 1.4

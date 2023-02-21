@@ -37,7 +37,7 @@ def plot_wedgedash_projection(
     mol = add_missing_bond_dirs(mol, atoms_ids_to_change_bond_type)
     AllChem.EmbedMolecule(mol)
 
-    output_img_dir = "../output_images"
+    output_img_dir = "output_images"
     os.makedirs(output_img_dir, exist_ok=True)
     if iupac_name:
         output_file_name = f"{iupac_name}_wedgedash_projection.svg"
