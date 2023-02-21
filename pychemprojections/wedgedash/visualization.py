@@ -18,7 +18,9 @@ from pychemprojections.wedgedash.bondoperations import (
 
 
 def plot_wedgedash_projection(
-    input_smiles: str, canvas_width_pixels: int = 500, canvas_height_pixels: int = 500
+    input_smiles: str,
+    canvas_width_pixels: int = 500,
+    canvas_height_pixels: int = 500,
 ):
     iupac_name = get_iupac_name_from_smiles(input_smiles)
     _, mol = preprocess_molecule(input_smiles)
