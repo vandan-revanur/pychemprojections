@@ -1,8 +1,4 @@
-pychemprojections/fischer/__pycache__/
 .idea
-pychemprojections/output_images/
-pychemprojections/utils/__pycache__/
+__pycache__/
 examples/.ipynb_checkpoints
-pychemprojections/__pycache__/
-pychemprojections/wedgedash/__pycache__/
-pychemprojections/newman/__pycache__/
+output_images/
