@@ -1,4 +1,7 @@
-from pychemprojections.newman.visualization import plot_newman_projection
+from pychemprojections.newman.visualization import (
+    get_newman_drawing_info,
+    plot_newman_projection,
+)
 import argparse
 
 from pychemprojections.utils.logger_utils import get_module_logger
@@ -29,7 +32,7 @@ logger.info(f"input SMILES: {input_smiles}")
 logger.info(f"canvas_width_pixels: {canvas_width_pixels}")
 logger.info(f"canvas_height_pixels: {canvas_height_pixels}")
 
-
-plot_newman_projection(
+newman_drawing_info = get_newman_drawing_info(
     input_smiles, canvas_width_pixels, canvas_height_pixels, (start_carbon, end_carbon)
 )
+plot_newman_projection(newman_drawing_info)
