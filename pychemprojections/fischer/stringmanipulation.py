@@ -11,6 +11,26 @@ logger = get_module_logger(__name__)
 def split_into_chunks(
     inp_str: str, text_width_pixels_coords: int, threshold_pixels: int
 ) -> str:
+    """
+    Wrap the text if the length of the text exceeds a threshold by splitting it into chunks
+
+    Parameters
+    ----------
+    inp_str : str
+        The input string of the substituent in the chemical notation form
+
+    text_width_pixels_coords: int
+        The width size of the text in terms of pixels
+
+    threshold_pixels: int
+        Threshold of pixels to start wrapping
+
+    Returns
+    -------
+    type
+    String with chunks of substrings separated by a "-\n-$"
+
+    """
     inp_str_len = len(inp_str)
     pixels_per_char = int(text_width_pixels_coords // inp_str_len)
     threshold_chars = int(threshold_pixels // pixels_per_char)
@@ -43,6 +63,26 @@ def split_into_chunks(
 def get_width_of_text_string(
     canvas_width: int, canvas_height: int, condensed_string: str
 ) -> int:
+    """
+    Get the width of a text string in terms of number of pixels
+
+    Parameters
+    ----------
+    canvas_width : int
+        Width of the canvas in pixels
+
+    canvas_height: int
+        Height of the canvas in pixels
+    condensed_string: str
+        Input string of the substituent in the condensed form
+
+    Returns
+    -------
+    int
+    Width of the input string
+
+    """
+
     DPI = 300
     fig, ax1 = plt.subplots(figsize=(canvas_width / DPI, canvas_height / DPI))
     r = fig.canvas.get_renderer()
@@ -58,6 +98,25 @@ def get_width_of_text_string(
 def prepare_strings_for_fischer_projection_plot(
     condensed_string: str, canvas_width: int, canvas_height: int
 ) -> str:
+    """
+    Perform wrapping and removing any cyclic chain numbering in any substituents
+
+    Parameters
+    ----------
+    condensed_string : str
+        The condensed form string of the substituent
+
+    canvas_width: int
+        Width of the canvas in pixels
+    canvas_height: int
+        Height of the canvas in pixels
+
+    Returns
+    -------
+    str
+    String of the substituent after doing any necessary wrapping
+
+    """
     regex = "[0-9]+"  # regex for removing cyclic numbering
     wrap_threshold = 0.2
     threshold_pixels = int(canvas_width * wrap_threshold)
@@ -94,6 +153,21 @@ def prepare_strings_for_fischer_projection_plot(
 def get_condensed_smiles_of_all_substituents(
     substituents_with_Hs_added: List[str],
 ) -> List[str]:
+    """
+    Get the condensed form of substituents.
+    More info on condensed form: https://en.wikipedia.org/wiki/Structural_formula#Condensed_formulas
+
+    Parameters
+    ----------
+    substituents_with_Hs_added :  List[str]
+        substituents with implicit hydrogens added
+
+    Returns
+    -------
+    List[str]
+    List of substituent strings in the condensed form
+
+    """
     return [
         smiles_to_condensed_form(cleanup_Hs(compound))
         for compound in substituents_with_Hs_added

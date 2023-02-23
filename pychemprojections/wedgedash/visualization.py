@@ -22,6 +22,21 @@ def plot_wedgedash_projection(
     canvas_width_pixels: int = 500,
     canvas_height_pixels: int = 500,
 ):
+    """
+    Plot/Draw the WedgeDash projection
+
+    Parameters
+    ----------
+    input_smiles : Mol
+        Molecule to examine
+
+    canvas_width_pixels: int
+        Width of the canvas in pixels
+
+    canvas_height_pixels: int
+        Height of the canvas in pixels
+
+    """
     iupac_name = get_iupac_name_from_smiles(input_smiles)
     _, mol = preprocess_molecule(input_smiles)
     mol = set_wedge_bonds(mol)

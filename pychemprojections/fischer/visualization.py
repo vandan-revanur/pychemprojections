@@ -36,6 +36,20 @@ def plot_fisher_projection_multiple_chiral_centers(
     multiple_chiral_fischer_notation: MultipleChiralFischerNotation,
     drawing_info: DrawingInfo,
 ):
+    """
+    Plot/Draw the Fischer projection of the compound with multiple chiral carbons
+
+    Parameters
+    ----------
+    multiple_chiral_fischer_notation : MultipleChiralFischerNotation
+        MultipleChiralFischerNotation class contains the substituents strings on the up, down, left and right side of the
+        Fischer projection backbone/main chain
+
+    drawing_info: DrawingInfo
+        DrawingInfo class contains information useful for drawing the Fischer projection such as
+        input_smiles,canvas_width_pixels, canvas_height_pixels,smiles_preprocessed, and iupac_name
+
+    """
     right = multiple_chiral_fischer_notation.right
     left = multiple_chiral_fischer_notation.left
     down = multiple_chiral_fischer_notation.down
@@ -129,6 +143,20 @@ def plot_fisher_projection_single_chiral_center(
     single_chiral_fischer_notation: SingleChiralFischerNotation,
     drawing_info: DrawingInfo,
 ):
+    """
+    Plot/Draw the Fischer projection of the compound with single chiral carbon
+
+    Parameters
+    ----------
+    single_chiral_fischer_notation : SingleChiralFischerNotation
+        SingleChiralFischerNotation class contains the substituents strings on the up, down, left and right side of the
+        chiral carbon
+
+    drawing_info: DrawingInfo
+        DrawingInfo class contains information useful for drawing the Fischer projection such as
+        input_smiles,canvas_width_pixels, canvas_height_pixels,smiles_preprocessed, and iupac_name
+
+    """
     DPI = 300
     line_color = "black"
     canvas_width = drawing_info.canvas_width_pixels
@@ -212,6 +240,20 @@ def plot_fischer_projection(
     canvas_width: int = 1000,
     canvas_height: int = 1000,
 ):
+    """
+    XXXXXXX
+
+    Parameters
+    ----------
+    input_smiles : str
+        SMILES string of the compound whose Fischer Projection should be drawn
+
+    canvas_width: int
+        Width of the canvas to draw the Fischer Projection in pixels
+    canvas_height: int
+        Height of the canvas to draw the Fischer Projection in pixels.
+
+    """
     iupac_name = get_iupac_name_from_smiles(input_smiles)
     smiles_mol_prepared, mol = preprocess_molecule(input_smiles)
 
