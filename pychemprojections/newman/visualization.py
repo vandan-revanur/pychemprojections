@@ -6,7 +6,7 @@ import os
 import matplotlib.pyplot as plt
 from pychemprojections.utils.logger_utils import get_module_logger
 from pychemprojections.newman.stringmanipulation import (
-    prepare_strings_for_newman_projection_plot,
+    prepare_string_for_newman_projection_plot,
     get_condensed_groups,
     get_post_processed_smiles,
     create_mapping_between_atom_ids_in_smiles_and_rdkit_mol_def,
@@ -20,7 +20,17 @@ from pychemprojections.newman.drawingclasses import NewmanDrawingInfo, AtomInfo
 logger = get_module_logger(__name__)
 
 
-def plot_projection(newman_drawing_info: NewmanDrawingInfo):
+def plot_newman_projection(newman_drawing_info: NewmanDrawingInfo):
+    """
+    Plot the Newman projection
+
+    Parameters
+    ----------
+    newman_drawing_info : NewmanDrawingInfo
+        Infomation neccessary for plotting/drawing the newman projection such as front and rear atom labels, canvas
+        width and height, iupac name of the substituents
+
+    """
     output_img_dir = "output_images"
     origin_x = 0
     origin_y = 0
@@ -56,16 +66,6 @@ def plot_projection(newman_drawing_info: NewmanDrawingInfo):
 
     center = (origin_x, origin_y)
     ax = draw_circle(ax, center, circle_radius)
-    logger.info("adding lines")
-    pos = "rear"
-    ax = add_lines(
-        ax, rear_angles, pos, origin_x, origin_y, start_line_offset, end_line_offset
-    )
-    pos = "front"
-    ax = add_lines(
-        ax, front_angles, pos, origin_x, origin_y, start_line_offset, end_line_offset
-    )
-    logger.info("adding atoms")
 
     rear_atom_info = AtomInfo(
         ax,
@@ -77,7 +77,7 @@ def plot_projection(newman_drawing_info: NewmanDrawingInfo):
         annotation_offset,
         "rear",
     )
-    ax = add_atoms(rear_atom_info)
+
     front_atom_info = AtomInfo(
         ax,
         front_atoms,
@@ -88,8 +88,13 @@ def plot_projection(newman_drawing_info: NewmanDrawingInfo):
         annotation_offset,
         "front",
     )
+    logger.info("adding lines")
+    ax = add_lines(rear_atom_info, start_line_offset, end_line_offset)
+    ax = add_lines(front_atom_info, start_line_offset, end_line_offset)
 
+    logger.info("adding atoms")
     ax = add_atoms(front_atom_info)
+    ax = add_atoms(rear_atom_info)
 
     if iupac_name:
         output_file_name = f"{iupac_name}_newman_projection.png"
@@ -102,12 +107,33 @@ def plot_projection(newman_drawing_info: NewmanDrawingInfo):
     plt.show()
 
 
-def plot_newman_projection(
+def get_newman_drawing_info(
     input_smiles: str,
     canvas_width_pixels: int = 2000,
     canvas_height_pixels: int = 2000,
     carbon_ids_bond_to_examine: Tuple[int, int] = None,
-):
+) -> NewmanDrawingInfo:
+    """
+    Get all the information required to make a Newman Projection plot
+
+    Parameters
+    ----------
+    input_smiles : str
+        Input SMILES of the compound to examine
+    canvas_width_pixels: int
+        Width of the canvas to draw in terms of pixels
+    canvas_height_pixels: int
+        Height of the canvas to draw in terms of pixels
+    carbon_ids_bond_to_examine:Tuple[int, int]
+        Ids of carbon atoms at which we are observing the molecule in order to make the Newman projection
+
+    Returns
+    -------
+    NewmanDrawingInfo
+    Infomation neccessary for plotting/drawing the newman projection such as front and rear atom labels, canvas
+        width and height, iupac name of the substituents
+
+    """
     n_carbons_for_truncation = 6
 
     smiles_mol_prepared, mol = preprocess_molecule(input_smiles)
@@ -151,14 +177,28 @@ def plot_newman_projection(
         canvas_height_pixels,
         iupac_name,
     )
-    plot_projection(newman_drawing_info)
+    return newman_drawing_info
 
 
 def get_front_and_back_groups_for_plotting(
     post_processed_smiles: List[str],
 ) -> Tuple[List[str], List[str]]:
+    """
+    Get the front and the back groups of substituents for plotting
+
+    Parameters
+    ----------
+    post_processed_smiles : type
+        SMILES post processed after replacing with molecular formula where appropriate
+
+    Returns
+    -------
+    Tuple[List[str], List[str]]
+    Tuple with a list of the front and list the back atoms
+
+    """
     newman_smiles = [
-        prepare_strings_for_newman_projection_plot(psm) for psm in post_processed_smiles
+        prepare_string_for_newman_projection_plot(psm) for psm in post_processed_smiles
     ]
     front_atoms = newman_smiles[:3]
     rear_atoms = newman_smiles[3:]

@@ -14,6 +14,21 @@ from typing import Dict, Any, List
 
 
 def get_condensed_groups(groups: Dict[str, Any]) -> List[str]:
+    """
+    Get the condensed form of substituents.
+    More info on condensed form: https://en.wikipedia.org/wiki/Structural_formula#Condensed_formulas
+
+    Parameters
+    ----------
+    groups :  Dict[str, Any]
+        Information about the substituent groups on the front and rear
+
+    Returns
+    -------
+    List[str]
+    List of substituent strings in the condensed form on the front and rear
+
+    """
     front_and_rear_groups = []
     for k, v in groups.items():
         front_and_rear_groups.extend(v.values())
@@ -25,7 +40,22 @@ def get_condensed_groups(groups: Dict[str, Any]) -> List[str]:
     return groups_condensed
 
 
-def prepare_strings_for_newman_projection_plot(condensed_string):
+def prepare_string_for_newman_projection_plot(condensed_string: str) -> str:
+    """
+    Prepare the strings by formatting such that superscript numbers for atoms are recognised in the chemical formula
+    notation
+
+    Parameters
+    ----------
+    condensed_string : str
+        The condensed form string of the substituent
+
+    Returns
+    -------
+    str
+    String of the substituent after doing any necessary wrapping
+
+    """
     regex = r"[0-9]+"
     end_pos_of_numbers = sorted(
         [sub_str.end() for sub_str in re.finditer(regex, condensed_string)],
@@ -51,7 +81,21 @@ def prepare_strings_for_newman_projection_plot(condensed_string):
     return newman_projection_notation
 
 
-def separate_atoms_and_nums(condensed_string):
+def separate_atoms_and_nums(condensed_string: str) -> str:
+    """
+    Add a hyphen between the atom symbol and the atom numbers
+
+    Parameters
+    ----------
+    condensed_string : str
+        The condensed form string of the substituent
+
+    Returns
+    -------
+    str
+    String of the substituent after separating the atom symbol and the atom numbers
+
+    """
     regex = r"[0-9]+"
     end_pos_of_numbers = sorted(
         [sub_str.end() for sub_str in re.finditer(regex, condensed_string)],
@@ -77,7 +121,22 @@ def separate_atoms_and_nums(condensed_string):
     return molecular_formula_atoms_nums_separated
 
 
-def get_c_ids_in_smiles(smiles_mol_prepared):
+def get_c_ids_in_smiles(smiles_mol_prepared: str) -> List[int]:
+    """
+    Get the ids of the carbon atoms in the SMILES string
+
+    Parameters
+    ----------
+    smiles_mol_prepared : str
+        The SMILES of the preprocessed molecule.
+        For details related to preprocessing see the function: pychemprojections.utils.rdkit_utils.preprocess_molecule
+
+    Returns
+    -------
+    List[int]
+    List of ids of the carbon atoms in the SMILES string
+
+    """
     carbon_atom_ids_in_smiles = []
 
     for i in range(len(smiles_mol_prepared) - 1):
@@ -86,7 +145,23 @@ def get_c_ids_in_smiles(smiles_mol_prepared):
     return carbon_atom_ids_in_smiles
 
 
-def recalibrate_mol_formula_to_account_for_H_addition(molecular_formula):
+def recalibrate_mol_formula_to_account_for_H_addition(molecular_formula: str) -> str:
+    """
+    Since the molecular formula calculated contains extra H due to adding of Hydrogens to the substituent in
+    prior steps upstream, there is a need to recalibrate the molecular formula to account for this addition and
+    accordingly remove the extra Hs.
+
+    Parameters
+    ----------
+    molecular_formula : str
+        Molecular formula of the compound
+
+    Returns
+    -------
+    str
+    Recalibrated molecular formula with the extra H removed
+
+    """
     atoms_and_nums_info = separate_atoms_and_nums(molecular_formula).split("_")
     num_Hs_idx = atoms_and_nums_info.index("H") + 1
     atoms_and_nums_info[num_Hs_idx] = str(int(atoms_and_nums_info[num_Hs_idx]) - 1)
@@ -94,7 +169,29 @@ def recalibrate_mol_formula_to_account_for_H_addition(molecular_formula):
     return molecular_formula
 
 
-def smiles_post_processing(input_smiles, condensed, n_carbons_for_truncation):
+def smiles_post_processing(
+    input_smiles: str, condensed: str, n_carbons_for_truncation: int
+) -> str:
+    """
+    Smiles processing does steps such as converting long carbon chain substituents into their molecular formula for
+    ease of reading, recalibrate molecular formula to account of addition of Hydrogens in the prior steps upstream
+
+    Parameters
+    ----------
+    input_smiles : str
+        Molecular formula of the compound
+    condensed : str
+        The condensed form string of the substituent
+    n_carbons_for_truncation: int
+        Threshold of number of carbon atoms to consider the substituent as a long carbon,
+        in order to convert into their molecular formula
+
+    Returns
+    -------
+    str
+    Post processed SMILES string
+
+    """
     if len(get_c_ids_in_smiles(input_smiles)) >= n_carbons_for_truncation:
         molecular_formula = convert_smiles_to_molecular_formula(input_smiles)
         molecular_formula = recalibrate_mol_formula_to_account_for_H_addition(
@@ -112,6 +209,27 @@ def get_substituents_front_and_rear(
     start_carbon_atom_idx_in_str: int,
     end_carbon_atom_idx_in_str: int,
 ) -> Dict[str, Any]:
+    """
+    Extract the front and rear substituents from the input SMILES string
+
+    Parameters
+    ----------
+    smiles_mol_prepared:
+    The SMILES of the preprocessed molecule.
+        For details related to preprocessing see the function: pychemprojections.utils.rdkit_utils.preprocess_molecule
+
+    start_carbon_atom_idx_in_str: int
+        id of the first carbon atom in terms of index of character 'C' in the string
+
+    end_carbon_atom_idx_in_str: int
+        id of the last carbon atom in terms of index of character 'C' in the string
+
+    Returns
+    -------
+    Dict[str, Any]
+    Information of the front and rear substituents
+
+    """
     groups = {
         "front": {"1": "", "2": "", "3": ""},
         "rear": {"1": "", "2": "", "3": ""},
@@ -179,10 +297,33 @@ def get_substituents_front_and_rear(
 
 
 def get_post_processed_smiles(
-    smiles_groups: List[str], groups_condensed: List[str], n_carbons_for_truncation: int
+    input_smiles_of_groups: List[str],
+    groups_condensed: List[str],
+    n_carbons_for_truncation: int,
 ) -> List[str]:
+    """
+    Get the post processed SMILES of all the front and rear substituents
+
+    Parameters
+    ----------
+    input_smiles_of_groups: List[str]
+        Input SMILES of all the substituents
+
+    groups_condensed: List[str]
+        The condensed form string of the substituents
+
+    n_carbons_for_truncation: int
+        Threshold of number of carbon atoms to consider the substituent as a long carbon,
+        in order to convert into their molecular formula
+
+    Returns
+    -------
+    List[str]
+    List of post processed SMILES of all the front and rear substituents
+
+    """
     post_processed_smiles = []
-    for input_smiles, condensed_group in zip(smiles_groups, groups_condensed):
+    for input_smiles, condensed_group in zip(input_smiles_of_groups, groups_condensed):
         post_processed_smiles.append(
             smiles_post_processing(
                 input_smiles, condensed_group, n_carbons_for_truncation
@@ -194,6 +335,25 @@ def get_post_processed_smiles(
 def create_mapping_between_atom_ids_in_smiles_and_rdkit_mol_def(
     mol: Mol, smiles_mol_prepared: str
 ) -> Dict[int, int]:
+    """
+    Create a mapping between the atom ids in the SMILES in terms of the id in the string to the ids that rdkit assigns
+    to atoms in a molecule
+
+    Parameters
+    ----------
+    mol : Mol
+        Molecule to be examined
+
+    smiles_mol_prepared:
+    The SMILES of the preprocessed molecule.
+        For details related to preprocessing see the function: pychemprojections.utils.rdkit_utils.preprocess_molecule
+
+    Returns
+    -------
+    Dict[int, int]
+    Mapping between the atom ids in the string to the rdkit id definition
+
+    """
     carbon_atom_ids_in_mol = get_atom_ids_of_all_carbon_atoms(mol)
     carbon_atom_ids_in_str = get_c_ids_in_smiles(smiles_mol_prepared)
     assert len(carbon_atom_ids_in_str) == len(
@@ -208,6 +368,20 @@ def create_mapping_between_atom_ids_in_smiles_and_rdkit_mol_def(
 
 
 def calibration_for_post_processing(groups: Dict[str, Any]) -> List[str]:
+    """
+    Calibrate the substituent SMILES for post processing
+
+    Parameters
+    ----------
+    groups : Dict[str, Any]
+        Information of the front and rear substituents
+
+    Returns
+    -------
+    List[str]
+    Calibrated substituent SMILES
+
+    """
     smiles_groups = []
     group_1_front_mol = Chem.MolFromSmiles(groups["front"]["1"] + "[H]")
     group_1_front_mol = Chem.RemoveHs(group_1_front_mol)
