@@ -160,7 +160,7 @@ def get_condensed_smiles_of_all_substituents(
     Parameters
     ----------
     substituents_with_Hs_added :  List[str]
-        XXXXXX
+        substituents with implicit hydrogens added
 
     Returns
     -------
