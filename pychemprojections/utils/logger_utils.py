@@ -1,8 +1,9 @@
 import logging
 import os
+from logging import Logger
 
 
-def get_module_logger(mod_name: str):
+def get_module_logger(mod_name: str) -> Logger:
     log_level = os.getenv("LOG_LEVEL", "WARNING")
     logger = logging.getLogger(mod_name)
     handler = logging.StreamHandler()
