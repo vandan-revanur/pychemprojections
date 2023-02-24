@@ -17,6 +17,9 @@ pip install git+https://github.com/vandan-revanur/pychemprojections
 ## Examples
 Example notebooks for all the projections implemented are available in [examples](examples) directory.
 
+## Contributing
+Please follow the [contributing guide](CONTRIBUTING.md) to understand how to contribute to the repo.
+
 ## Authors
 * **Vandan Revanur** 
 
