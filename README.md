@@ -6,6 +6,13 @@ The following projections are implemented:
 * Newman Projection
 * WedgeDash Projection
 
+**Note**: 
+
+The Fischer projection drawing does not support SMILES of compounds where cyclic rings are formed with any of chiral carbon atoms present in the main chain.
+Therefore, if you would like to draw the Fischer projection of sugars, use the open chain form isomeric SMILES of the compound.
+
+For example, to draw the Fischer projection of Glucose, use the open chain isomeric SMILES which is:
+`C([C@H]([C@H]([C@@H]([C@H](C=O)O)O)O)O)O` instead of the closed chain SMILES `C([C@@H]1[C@H]([C@@H]([C@H](C(O1)O)O)O)O)O`
 
 ## Installing
 Install the library using pip:
