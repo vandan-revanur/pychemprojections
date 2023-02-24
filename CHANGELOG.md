@@ -8,6 +8,7 @@
 
 ### Refactor
 
+- Added badges
 - Add type hints to logger_utils
 - Modify fischer example notebook to use an iupac recognized single chiral center molecule
 - Modified the example notebook for Newman Projection
