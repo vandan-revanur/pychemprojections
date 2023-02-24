@@ -22,7 +22,7 @@ Example notebooks for all the projections implemented are available in [examples
 
 ## License
 
-This project is licensed under the BSD License - see the [license.txt](license.txt) file for details
+This project is licensed under the BSD License - see the [LICENSE.txt](LICENSE.txt) file for details
 
 ## Acknowledgments
 
