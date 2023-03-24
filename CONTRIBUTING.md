@@ -9,7 +9,17 @@ We welcome contributions, in the following ways:
 
 If you have a question, want to report a bug, or have an enhancement suggestions then please submit an issue.
 
-To contribute with code to the project make a pull request.
+### Planned Features
+
+We plan to have the following features in the future. 
+
+* Sawhorse projection 
+* Projections/conformations such as Chair/Boat/Twisted boat conformations
+* Haworth projections
+
+If you are interested in building any of these join this [discord channel](https://discord.gg/aEmf9MqX)
+
+To contribute with code to the project make a pull request with the below process.
 
 ### Pull Request Process
 
