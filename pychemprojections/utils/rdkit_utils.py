@@ -37,7 +37,7 @@ def get_iupac_name_from_smiles(input_smiles: str) -> str:
         compounds = pubchempy.get_compounds(input_smiles, namespace="smiles")
         match = compounds[0]
         iupac_name = match.iupac_name
-    except:
+    except Exception:
         iupac_name = None
     return iupac_name
 

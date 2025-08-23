@@ -144,7 +144,7 @@ def get_newman_drawing_info(
     )
     iupac_name = get_iupac_name_from_smiles(input_smiles)
 
-    if carbon_ids_bond_to_examine == None:
+    if carbon_ids_bond_to_examine is None:
         start_carbon_mol_id_for_examination = list(carbon_ids_mol_to_str_map.keys())[0]
         end_carbon_mol_id_for_examination = list(carbon_ids_mol_to_str_map.keys())[1]
 

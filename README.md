@@ -1,9 +1,9 @@
 # pychemprojections
 
 [![License](https://img.shields.io/badge/license-BSD-green)](LICENSE.txt)
-[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/python/black) 
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/python/black)
 
-pychemprojections is a python library for visualizing various 2D projections of molecules. 
+pychemprojections is a python library for visualizing various 2D projections of molecules.
 
 The following projections are implemented:
 * Fischer Projection
@@ -41,7 +41,7 @@ Example notebooks for all the projections implemented are available in [examples
 Please follow the [contributing guide](CONTRIBUTING.md) to understand how to contribute to the repo.
 
 ## Authors
-* **Vandan Revanur** 
+* **Vandan Revanur**
 
 ## License
 

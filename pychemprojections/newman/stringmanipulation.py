@@ -9,7 +9,7 @@ from pychemprojections.utils.smiles_manipulation_utils import (
 )
 from pychemprojections.utils.rdkit_utils import get_atom_ids_of_all_carbon_atoms
 from rdkit import Chem
-from rdkit.Chem import Mol, PropertyMol
+from rdkit.Chem import Mol
 from typing import Dict, Any, List
 
 
@@ -356,9 +356,9 @@ def create_mapping_between_atom_ids_in_smiles_and_rdkit_mol_def(
     """
     carbon_atom_ids_in_mol = get_atom_ids_of_all_carbon_atoms(mol)
     carbon_atom_ids_in_str = get_c_ids_in_smiles(smiles_mol_prepared)
-    assert len(carbon_atom_ids_in_str) == len(
-        carbon_atom_ids_in_mol
-    ), "number of carbon atoms in SMILES string not matching the number of carbons in rdkit molecule definition"
+    assert len(carbon_atom_ids_in_str) == len(carbon_atom_ids_in_mol), (
+        "number of carbon atoms in SMILES string not matching the number of carbons in rdkit molecule definition"
+    )
     carbon_ids_mol_to_str_map = {
         c_idx_mol: c_idx_str
         for c_idx_str, c_idx_mol in zip(carbon_atom_ids_in_str, carbon_atom_ids_in_mol)

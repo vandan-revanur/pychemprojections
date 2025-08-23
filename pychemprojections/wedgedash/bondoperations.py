@@ -1,6 +1,6 @@
 from rdkit import Chem
 from rdkit.Chem import AllChem
-from rdkit.Chem import Mol, Mol
+from rdkit.Chem import Mol
 from pychemprojections.utils.logger_utils import get_module_logger
 from typing import Dict, Any, List
 
