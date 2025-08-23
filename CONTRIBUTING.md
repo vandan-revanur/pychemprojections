@@ -25,13 +25,13 @@ To contribute with code to the project make a pull request with the below proces
 
 1. Fork this repository.
 2. Create a branch: `git checkout -b <branch_name>`.
-3. Format your code with the [black](https://pypi.org/project/black/) package.
+3. Install pre-commit tool and the hooks: ```pip install pre-commit && pre-commit install```
 4. Make your changes and commit them.
 Use the [conventional-commits format](https://www.conventionalcommits.org/en/v1.0.0/).
-A good and easy way to do this is to install commitizen tool.
-For the interactive version look [here](https://github.com/commitizen-tools/commitizen).
+You can do this either with commitizen tool or normal git commit.
+Interactive version of the commitizen tool can be found [here](https://github.com/commitizen-tools/commitizen).
 For the non-interactive CLI version look [here](https://github.com/streamich/git-cz).
-4. Update the README.md with details of changes.
-5. Increase the version number and generate changelog using commitizen : `cz bump --changelog`. The versioning scheme we use is [SemVer](http://semver.org/).
+4. [Optionally] Update the README.md with details of changes.
+5. [Optionally] Increase the version number and generate changelog using commitizen : `cz bump --changelog`. The versioning scheme we use is [SemVer](http://semver.org/).
 4. Push to the remote branch: `git push`
 5. Create the pull request.
