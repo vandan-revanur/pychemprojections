@@ -104,8 +104,8 @@ def plot_fisher_projection_multiple_chiral_centers(
     ax1.set_yticks(ytick_locations)
 
     ax1.tick_params(color="white")
-    labels_left = ax1.set_yticklabels(left)
-    labels_down = ax1.set_xticklabels((down,), ha="left")
+    ax1.set_yticklabels(left)
+    ax1.set_xticklabels((down,), ha="left")
 
     # y-axis on right
     ax2 = ax1.twinx()
@@ -113,7 +113,7 @@ def plot_fisher_projection_multiple_chiral_centers(
     ax2.set_ylim(0, canvas_height)
     ax2.set_xlim(0, canvas_width)
     ax2.set_yticks(ytick_locations)
-    labels_right = ax2.set_yticklabels(right)
+    ax2.set_yticklabels(right)
 
     # x-axis on top
     ax3 = ax1.twiny()
@@ -122,7 +122,7 @@ def plot_fisher_projection_multiple_chiral_centers(
     ax3.set_ylim(0, canvas_height)
     ax3.set_xlim(0, canvas_width)
     ax3.set_xticks((canvas_width / 2,))
-    labels_up = ax3.set_xticklabels((up,), ha="left", wrap=True)
+    ax3.set_xticklabels((up,), ha="left", wrap=True)
     if iupac_name:
         plt.title(iupac_name + "\n")
 
@@ -198,8 +198,8 @@ def plot_fisher_projection_single_chiral_center(
     ax1.set_yticks((canvas_height / 2,))
     ax1.set_xticks((canvas_width / 2,))
     ax1.tick_params(color="white")
-    labels_left = ax1.set_yticklabels((left,))
-    labels_down = ax1.set_xticklabels((down,), ha="left")
+    ax1.set_yticklabels((left,))
+    ax1.set_xticklabels((down,), ha="left")
 
     # x-axis on right
     ax2 = ax1.twinx()
@@ -208,7 +208,7 @@ def plot_fisher_projection_single_chiral_center(
     ax2.set_ylim(0, canvas_height)
     ax2.set_xlim(0, canvas_width)
     ax2.set_yticks((canvas_height / 2,))
-    labels_right = ax2.set_yticklabels((right,))
+    ax2.set_yticklabels((right,))
 
     # x-axis on top
     ax3 = ax1.twiny()
@@ -217,7 +217,7 @@ def plot_fisher_projection_single_chiral_center(
     ax3.set_ylim(0, canvas_height)
     ax3.set_xlim(0, canvas_width)
     ax3.set_xticks((canvas_width / 2,))
-    labels_up = ax3.set_xticklabels((up,), ha="left", wrap=True)
+    ax3.set_xticklabels((up,), ha="left", wrap=True)
 
     if iupac_name:
         plt.title(iupac_name + "\n")
@@ -335,9 +335,9 @@ def plot_fischer_projection(
         up = substituents_fischer_notation[0]["substituents"][0]
         down = substituents_fischer_notation[-1]["substituents"][1]
         left, right = get_right_and_left_substituents(substituents_condensed_form)
-        assert len(left) == len(
-            right
-        ), f"The number of substituents on the left side of the chain ({len(left)}) do not match the number of substituents on the right side ({len(right)})"
+        assert len(left) == len(right), (
+            f"The number of substituents on the left side of the chain ({len(left)}) do not match the number of substituents on the right side ({len(right)})"
+        )
 
         multiple_chiral_fischer_notation = MultipleChiralFischerNotation(
             up=up, down=down, left=left, right=right
