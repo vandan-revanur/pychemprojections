@@ -10,6 +10,26 @@ The following projections are implemented:
 * Newman Projection
 * WedgeDash Projection
 
+## Installing
+Install the library using pip:
+
+```
+pip install pychemprojections
+```
+
+## Examples
+Example notebooks for all the projections implemented are available in [examples](examples) directory.
+
+## Contributing
+Please follow the [contributing guide](CONTRIBUTING.md) to understand how to contribute to the repo.
+
+## Authors
+* **Vandan Revanur**
+
+## License
+
+This project is licensed under the BSD License - see the [LICENSE.txt](LICENSE.txt) file for details
+
 ## Note
 
 ### Fischer Projection
@@ -26,23 +46,3 @@ For example, to draw the Fischer projection of Glucose, use the open chain isome
 instead of the closed chain SMILES:
 
 `C([C@@H]1[C@H]([C@@H]([C@H](C(O1)O)O)O)O)O`
-
-## Installing
-Install the library using pip:
-
-```
-pip install git+https://github.com/vandan-revanur/pychemprojections
-```
-
-## Examples
-Example notebooks for all the projections implemented are available in [examples](examples) directory.
-
-## Contributing
-Please follow the [contributing guide](CONTRIBUTING.md) to understand how to contribute to the repo.
-
-## Authors
-* **Vandan Revanur**
-
-## License
-
-This project is licensed under the BSD License - see the [LICENSE.txt](LICENSE.txt) file for details
