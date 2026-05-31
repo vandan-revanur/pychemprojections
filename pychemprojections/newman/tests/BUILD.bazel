@@ -1,0 +1,24 @@
+# pychemprojections/newman/tests/BUILD.bazel
+# Unit tests for the newman projection package.
+# Adding a new test_*.py file here requires NO changes to this BUILD file.
+
+load("@rules_python//python:defs.bzl", "py_test")
+
+exports_files(glob(["test_*.py"]) + ["__init__.py"])
+
+_RUNNER = ["//tests:pytest_runner.py"]
+_PYTEST  = ["@pypi//pytest", "@pypi//pytest_mock"]
+
+py_test(
+    name = "newman_tests",
+    srcs = _RUNNER + glob(["__init__.py", "test_*.py"]),
+    main = "pytest_runner.py",
+    args = ["pychemprojections/newman/tests/", "--tb=short", "-q"],
+    deps = _PYTEST + [
+        "//:newman_drawingelements",
+        "//:newman_drawingclasses",
+        "//:newman_stringmanipulation",
+        "//:utils_rdkit",
+        "@pypi//matplotlib",
+    ],
+)

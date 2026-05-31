@@ -17,3 +17,20 @@ repos:
       stages: [pre-commit]
     - id: ruff-format
       name: Ruff Formatter
+
+  # ── Bazel-powered pytest (fast, hermetic, cached) ─────────────────────────
+  # Each test module is a separate Bazel target; only targets whose inputs
+  # changed since the last commit are re-executed.  All others are served
+  # from Bazel's local cache with zero rebuild cost.
+  - repo: local
+    hooks:
+      - id: bazel-pytest
+        name: Pytest via Bazel (cached)
+        language: system
+        # all_tests_fast runs the full suite in ONE sandbox process.
+        # Overhead is paid once (~3s) instead of 11 times.
+        # On cache hit (no .py files changed) Bazel executes zero tests in ~0.3s.
+        entry: bazel test //tests:all_tests_fast --test_output=errors
+        pass_filenames: false
+        files: \.(py)$
+        stages: [pre-commit]
