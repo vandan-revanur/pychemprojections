@@ -1,0 +1,9 @@
+# Direct runtime deps
+rdkit>=2022.9.4
+matplotlib>=3.7.0
+pubchempy>=1.0.4
+
+# Test deps
+pytest>=9.0.2
+pytest-mock>=3.15.1
+

@@ -1,0 +1,83 @@
+# tests/BUILD.bazel
+#
+# ...existing code...
+
+load("@rules_python//python:defs.bzl", "py_test")
+exports_files(["pytest_runner.py"])  # makes //tests:pytest_runner.py usable in other packages
+
+_RUNNER = ["pytest_runner.py"]
+_PYTEST  = ["@pypi//pytest", "@pypi//pytest_mock"]
+
+# ── Integration tests (visualization pipelines) ───────────────────────────────
+# One target per projection — glob picks up any new test_*.py automatically.
+
+py_test(
+    name = "test_fischer_visualization",
+    srcs = _RUNNER + glob(["test_fischer_*.py"]),
+    main = "pytest_runner.py",
+    args = ["tests/", "-k", "fischer", "--tb=short", "-q"],
+    deps = _PYTEST + ["//:fischer_visualization"],
+)
+
+py_test(
+    name = "test_newman_visualization",
+    srcs = _RUNNER + glob(["test_newman_*.py"]),
+    main = "pytest_runner.py",
+    args = ["tests/", "-k", "newman", "--tb=short", "-q"],
+    deps = _PYTEST + ["//:newman_visualization"],
+)
+
+py_test(
+    name = "test_wedgedash_visualization",
+    srcs = _RUNNER + glob(["test_wedgedash_*.py"]),
+    main = "pytest_runner.py",
+    args = ["tests/", "-k", "wedgedash", "--tb=short", "-q"],
+    deps = _PYTEST + ["//:wedgedash_visualization"],
+)
+
+# ── Pre-commit target: one sandbox, full suite, fast cache ────────────────────
+# Passes the whole source tree to pytest for discovery in one process.
+# Bazel cannot cross package boundaries in srcs[], so we include only this
+# package's files here and let pytest's rootdir discovery find the rest.
+py_test(
+    name = "all_tests_fast",
+    srcs = _RUNNER + glob(["test_*.py"]),
+    main = "pytest_runner.py",
+    args = [
+        "tests/",
+        "pychemprojections/",
+        "--tb=short", "-q",
+        "--ignore=pychemprojections/wedgedash/__pycache__",
+    ],
+    deps = _PYTEST + ["//:pychemprojections", "@pypi//matplotlib", "@pypi//rdkit"],
+    size = "medium",
+    # Expose unit test files as data so they are present in the sandbox runfiles
+    data = [
+        "//pychemprojections/utils/tests:test_smiles_manipulation_utils.py",
+        "//pychemprojections/utils/tests:test_rdkit_utils.py",
+        "//pychemprojections/fischer/tests:test_singlechiral.py",
+        "//pychemprojections/fischer/tests:test_multiplechiral.py",
+        "//pychemprojections/fischer/tests:test_stringmanipulation.py",
+        "//pychemprojections/newman/tests:test_drawingelements.py",
+        "//pychemprojections/newman/tests:test_stringmanipulation.py",
+        "//pychemprojections/wedgedash/tests:test_bondoperations.py",
+    ],
+)
+
+# ── Root test_suite: aggregates all per-package suites + integration tests ────
+# Use this in CI for granular per-target caching with a remote cache.
+#   bazel test //tests:all_projection_tests
+test_suite(
+    name = "all_projection_tests",
+    tests = [
+        # per-package unit test suites
+        "//pychemprojections/utils/tests:utils_tests",
+        "//pychemprojections/fischer/tests:fischer_tests",
+        "//pychemprojections/newman/tests:newman_tests",
+        "//pychemprojections/wedgedash/tests:wedgedash_tests",
+        # integration tests
+        ":test_fischer_visualization",
+        ":test_newman_visualization",
+        ":test_wedgedash_visualization",
+    ],
+)

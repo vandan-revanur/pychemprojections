@@ -1,0 +1,168 @@
+# Root BUILD.bazel for pychemprojections
+# Granular py_library targets mirror the internal import graph so that
+# a change to one module only invalidates the test targets that actually
+# depend on it — not the entire suite.
+
+load("@rules_python//python:defs.bzl", "py_library", "py_binary")
+
+package(default_visibility = ["//visibility:public"])
+
+# ── External dep shorthands ───────────────────────────────────────────────────
+_RDKIT     = ["@pypi//rdkit"]
+_MPLB      = ["@pypi//matplotlib"]
+_PUBCHEM   = ["@pypi//pubchempy"]
+_NUMPY     = ["@pypi//numpy"]
+
+# ── utils ─────────────────────────────────────────────────────────────────────
+
+py_library(
+    name = "utils_smiles_manipulation",
+    srcs = ["pychemprojections/utils/smiles_manipulation_utils.py",
+            "pychemprojections/utils/__init__.py"],
+    imports = ["."],
+)
+
+py_library(
+    name = "utils_logger",
+    srcs = ["pychemprojections/utils/logger_utils.py",
+            "pychemprojections/utils/__init__.py"],
+    imports = ["."],
+)
+
+py_library(
+    name = "utils_rdkit",
+    srcs = ["pychemprojections/utils/rdkit_utils.py",
+            "pychemprojections/utils/__init__.py"],
+    imports = ["."],
+    deps = [":utils_logger"] + _RDKIT + _PUBCHEM,
+)
+
+# ── fischer ───────────────────────────────────────────────────────────────────
+
+py_library(
+    name = "fischer_drawingclasses",
+    srcs = ["pychemprojections/fischer/drawingclasses.py",
+            "pychemprojections/fischer/__init__.py"],
+    imports = ["."],
+)
+
+py_library(
+    name = "fischer_stringmanipulation",
+    srcs = ["pychemprojections/fischer/stringmanipulation.py"],
+    imports = ["."],
+    deps = [":utils_rdkit", ":utils_logger"] + _MPLB,
+)
+
+py_library(
+    name = "fischer_singlechiral",
+    srcs = ["pychemprojections/fischer/singlechiral.py"],
+    imports = ["."],
+    deps = [
+        ":utils_smiles_manipulation",
+        ":fischer_stringmanipulation",
+        ":fischer_drawingclasses",
+        ":utils_logger",
+    ],
+)
+
+py_library(
+    name = "fischer_multiplechiral",
+    srcs = ["pychemprojections/fischer/multiplechiral.py"],
+    imports = ["."],
+    deps = [
+        ":utils_smiles_manipulation",
+        ":fischer_stringmanipulation",
+        ":fischer_singlechiral",
+        ":fischer_drawingclasses",
+    ],
+)
+
+py_library(
+    name = "fischer_visualization",
+    srcs = ["pychemprojections/fischer/visualization.py"],
+    imports = ["."],
+    deps = [
+        ":utils_rdkit",
+        ":utils_logger",
+        ":fischer_singlechiral",
+        ":fischer_stringmanipulation",
+        ":fischer_multiplechiral",
+        ":fischer_drawingclasses",
+    ],
+)
+
+# ── newman ────────────────────────────────────────────────────────────────────
+
+py_library(
+    name = "newman_drawingclasses",
+    srcs = ["pychemprojections/newman/drawingclasses.py",
+            "pychemprojections/newman/__init__.py"],
+    imports = ["."],
+    deps = _MPLB,
+)
+
+py_library(
+    name = "newman_drawingelements",
+    srcs = ["pychemprojections/newman/drawingelements.py"],
+    imports = ["."],
+    deps = [":utils_logger", ":newman_drawingclasses"] + _MPLB + _NUMPY,
+)
+
+py_library(
+    name = "newman_stringmanipulation",
+    srcs = ["pychemprojections/newman/stringmanipulation.py"],
+    imports = ["."],
+    deps = [":utils_rdkit", ":utils_smiles_manipulation"] + _RDKIT,
+)
+
+py_library(
+    name = "newman_visualization",
+    srcs = ["pychemprojections/newman/visualization.py"],
+    imports = ["."],
+    deps = [
+        ":utils_rdkit",
+        ":utils_logger",
+        ":newman_stringmanipulation",
+        ":newman_drawingelements",
+        ":newman_drawingclasses",
+    ] + _MPLB,
+)
+
+# ── wedgedash ─────────────────────────────────────────────────────────────────
+
+py_library(
+    name = "wedgedash_bondoperations",
+    srcs = ["pychemprojections/wedgedash/bondoperations.py",
+            "pychemprojections/wedgedash/__init__.py"],
+    imports = ["."],
+    deps = [":utils_logger"] + _RDKIT,
+)
+
+py_library(
+    name = "wedgedash_visualization",
+    srcs = ["pychemprojections/wedgedash/visualization.py"],
+    imports = ["."],
+    deps = [":utils_rdkit", ":wedgedash_bondoperations"] + _RDKIT,
+)
+
+# ── convenience alias (used by legacy references) ─────────────────────────────
+# Depends on every sub-library; avoid using this in new test targets.
+py_library(
+    name = "pychemprojections",
+    deps = [
+        ":utils_smiles_manipulation",
+        ":utils_logger",
+        ":utils_rdkit",
+        ":fischer_drawingclasses",
+        ":fischer_stringmanipulation",
+        ":fischer_singlechiral",
+        ":fischer_multiplechiral",
+        ":fischer_visualization",
+        ":newman_drawingclasses",
+        ":newman_drawingelements",
+        ":newman_stringmanipulation",
+        ":newman_visualization",
+        ":wedgedash_bondoperations",
+        ":wedgedash_visualization",
+    ],
+)
