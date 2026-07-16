@@ -16,5 +16,12 @@ jobs:
         with:
           python-version: '3.x'
 
+      - name: Set up Bazel with caching
+        uses: bazel-contrib/setup-bazel@0.9.0
+        with:
+          bazelisk-cache: true       # caches the Bazel binary download (~60 MB)
+          disk-cache: ${{ github.workflow }}  # caches built test artifacts
+          repository-cache: true     # caches external packages (rdkit, numpy, etc.)
+
       - name: Run pre-commit
         uses: pre-commit/action@v3.0.1
