@@ -23,5 +23,3 @@ pip.parse(
     requirements_lock = "//:requirements_lock.txt",
 )
 use_repo(pip, "pypi")
-
-
